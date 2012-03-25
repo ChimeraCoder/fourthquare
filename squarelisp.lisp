@@ -28,16 +28,25 @@
                           'NIL )))
 
 (defun query (authenticator endpoint &optional extra-fields params)
-  (json:decode-json-from-string 
-    (drakma:http-request 
-      (concatenate 
-        'string 
-        "https://api.foursquare.com/v2/" 
-        (string endpoint) 
-        (auth-param authenticator) 
-        (encode-url-params params)))))
+  (let* ((uri
+            (concatenate 
+                    'string 
+                    "https://api.foursquare.com/v2/" 
+                    (string endpoint)
+                    "?oauth_token="
+                    (auth-param authenticator) 
+                    "&v=20120301&"
+                    (encode-url-params params)))
+         (response
+           (drakma:http-request uri :preserve-uri 'T)))
+    (progn
+      (print uri)
+      (print response)
+      (json-to-list (octets-to-string response)))))
+      
 
-
+(defun auth-param (authenticator)
+  authenticator)
 
 
 
