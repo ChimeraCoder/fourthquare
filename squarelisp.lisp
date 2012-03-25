@@ -72,11 +72,11 @@
     (gethash (string (car hsh-keys)) data-hash)))
 
 
-(defun user-field (usr field)
-  (gethash field (symbolize-hash-keys (user-data me))))
+(defun recent-checkins (usr)
+  (car (gethash "items" (user-field usr 'checkins))))
+
 
 (defun checkin-field (chckin field)
   (gethash field (symbolize-hash-keys (checkin-data me))))
 
-(defun recent-checkins (usr)
-  (car (gethash "items" (user-field usr 'checkins))))
+
