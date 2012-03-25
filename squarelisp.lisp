@@ -1,0 +1,61 @@
+(ql:quickload 'cl-json)
+(ql:quickload "cxml")
+(ql:quickload "drakma")
+(ql:quickload "ironclad")
+(ql:quickload 'local-time)
+(ql:quickload 'lisp-unit)
+
+(load "./bootstrap.lisp")
+
+(defun authorize-uri (client-id client-secret redirect-uri)
+  (concatenate 'string "https://foursquare.com/oauth2/authenticate?client_id=" client-id "&response_type=code&redirect_uri=" redirect-uri))
+
+(defun set-token (client-id client-secret redirect-uri code)
+  (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
+
+(defun json-to-list (str)
+    "Parse the json string input and return an equivalent a-list"
+      (let ((result (json:decode-json-from-string str)))
+              result))
+
+(defun make-authenticator (c-id c-sec r-uri cde)
+  (let ((client-id c-id)
+        (client-secret c-sec)
+        (redirect-uri r-uri)
+        (code cde)
+        (access-token 'NIL))
+    #'(lambda (action &rest arguments)
+        (ecase action
+          (authorize-uri
+            (concatenate 'string "https://foursquare.com/oauth2/authenticate?client_id=" client-id "&response_type=code&redirect_uri=" redirect-uri))
+          (set-token (car arguments) 
+            (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
+          (access-token
+            (if (not access-token)
+              (setq access-token (json-to-list (drakma:http-request
+                              (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))))
+              (access-token)))))))
+
+
+(defun encode-url-params (params)
+    "Encode the specified parameter alist as GET values (with Toodledo's format)"
+      (let ((key (caar params))
+                    (value (cdar params)))
+            (if (and key value)
+                    (concatenate 'string (string key) "=" (string value) ";" (encode-url-params (cdr params)))
+                          'NIL )))
+
+(defun query (authenticator endpoint &optional extra-fields params)
+  (json:decode-json-from-string 
+    (drakma:http-request 
+      (concatenate 
+        'string 
+        "https://api.foursquare.com/v2/" 
+        (string endpoint) 
+        (auth-param authenticator) 
+        (encode-url-params params)))))
+
+
+
+
+
