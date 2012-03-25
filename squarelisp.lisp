@@ -15,11 +15,12 @@
 (defun hash-keys (hsh)
   (alexandria.0.dev:hash-table-keys hsh))
 
-(defun json-to-list (str)
-    "Parse the json string input and return an equivalent a-list"
-      (let ((result (json:decode-json-from-string str)))
-              result))
+(defun auth-param (authenticator)
+  authenticator)
 
+
+(defun set-token (client-id client-secret redirect-uri code)
+  (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
 
 (defun encode-url-params (params)
     "Encode the specified parameter alist as GET values (with Toodledo's format)"
@@ -41,12 +42,8 @@
                                        (acons "v" "20120324" params)))))
     (progn
       (print uri)
-      (json-to-list (octets-to-string response)))))
-      
-
-(defun auth-param (authenticator)
-  authenticator)
-
+      (json:parse (octets-to-string response)))))
+     
 (defstruct user
   authenticator
   data)
@@ -55,8 +52,8 @@
   "Return the user associated with the given id."
   (make-user 
     :authenticator 'NIL
-    :data (cadr (caddr 
-                     (query authenticator 
+    :data (gethash "response" 
+                   (query authenticator 
                             (concatenate 'string "users/" (string userid)) 
-                            extra-fields params)))))
+                            extra-fields params))))
 
