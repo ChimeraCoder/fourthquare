@@ -1,9 +1,6 @@
 (ql:quickload 'yason)
-(ql:quickload "cxml")
 (ql:quickload "drakma")
 (ql:quickload "ironclad")
-(ql:quickload 'local-time)
-(ql:quickload 'lisp-unit)
 (ql:quickload "alexandria")
 
 
