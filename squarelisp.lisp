@@ -66,3 +66,7 @@
   (if (cdr hsh-keys)
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
+
+(defmacro gv (data-hash &body hsh-keys)
+  "Don't use this macro yet."
+  `(apply #'get-value ,data-hash ,(mapcar #' hsh-keys)))
