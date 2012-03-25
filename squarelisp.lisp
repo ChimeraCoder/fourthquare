@@ -45,5 +45,16 @@
 (defun auth-param (authenticator)
   authenticator)
 
+(defstruct user
+  authenticator
+  data)
 
+(defun find-user (authenticator userid &optional extra-fields params)
+  "Return the user associated with the given id."
+  (make-user 
+    :authenticator 'NIL
+    :data (cadr (caddr 
+                     (query authenticator 
+                            (concatenate 'string "users/" (string userid)) 
+                            extra-fields params)))))
 
