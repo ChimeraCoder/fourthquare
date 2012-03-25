@@ -12,8 +12,8 @@
 (defun authorize-uri (client-id client-secret redirect-uri)
   (concatenate 'string "https://foursquare.com/oauth2/authenticate?client_id=" client-id "&response_type=code&redirect_uri=" redirect-uri))
 
-(defun set-token (client-id client-secret redirect-uri code)
-  (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
+(defun hash-keys (hsh)
+  (alexandria.0.dev:hash-table-keys hsh))
 
 (defun json-to-list (str)
     "Parse the json string input and return an equivalent a-list"
