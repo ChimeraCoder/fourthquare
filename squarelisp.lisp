@@ -60,24 +60,15 @@
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
 
-(defun symbolize-hash-keys (hsh-table &optional cur remaining )
-  (let ((current (if cur
-                   cur
-                   (make-hash-table)))
-        (remaining (if remaining
-                     remaining
-                     (hash-keys hsh-table))))
-    ;;Otherwise, we've already started and are in the middle of the recursion
-    (if remaining
-      (setf 
-        (gethash 
-          (read-from-string     ;;The value associated with the symbolic form of the first (string) element in 'remaining'
-            (car remaining))
-          (symbolize-hash-keys hsh-table current 
-                               (cdr remaining))) ;;The (car remaining) will be taken care of, so as long as the rest are, we're fine
-        (gethash (car remaining) hsh-table)) ;;Set it to the value that's crrently in the old table
-      current)))
-
+(defun symbolize-hash-keys (hsh-table)
+  (let ((new-hash (make-hash-table)))
+    (progn 
+      (maphash (lambda (x y)
+                        (setf 
+                          (gethash (read-from-string x) new-hash)
+                          y))
+                        hsh-table)
+       new-hash)))
 
 
 
