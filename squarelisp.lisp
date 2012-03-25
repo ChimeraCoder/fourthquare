@@ -54,14 +54,19 @@
                                            (concatenate 'string "users/" (string userid)) 
                                            extra-fields params)))))
     (make-user 
-      :authenticator 'NIL
+      :authenticator authenticator
       :data (symbolize-hash-keys usr-data))))
 
 (defun find-checkin (authenticator checkinid &optional extra-fields params)
   "Return the checkin associated with the given id."
-  (gethash "response" (query authenticator
-                             (concatenate 'sring "checkins/" (string checkinid))
-                             extra-fields params)))
+  (let ((checkin-data (gethash "checkin"
+                               (gethash "response" 
+                                        (query authenticator
+                                               (concatenate 'string "checkins/" (string checkinid))
+                                                extra-fields params)))))
+    (make-checkin 
+      :authenticator authenticator
+      :data (symbolize-hash-keys checkin-data))))
 
 (defun user-checkins (usr)
   (car (get-value (user-data usr) "user" "checkins" "items")))
@@ -71,12 +76,15 @@
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
 
-
 (defun recent-checkins (usr)
   (car (gethash "items" (user-field usr 'checkins))))
 
 
-(defun checkin-field (chckin field)
-  (gethash field (symbolize-hash-keys (checkin-data me))))
 
+(defstruct checkin
+  authenticator
+  data)
+
+(defmethod field-val ((checkin checkin) (field symbol))
+  (gethash field (symbolize-hash-keys (checkin-data checkin))))
 
