@@ -35,13 +35,14 @@
 
 (defun find-user (authenticator userid &optional extra-fields params)
   "Return the user associated with the given id."
-  (make-user 
-    :authenticator 'NIL
-    :data (gethash "user"
-                   (gethash "response" 
-                            (query authenticator 
-                                   (concatenate 'string "users/" (string userid)) 
-                                   extra-fields params)))))
+  (let ((usr-data (gethash "user"
+                           (gethash "response" 
+                                    (query authenticator 
+                                           (concatenate 'string "users/" (string userid)) 
+                                           extra-fields params)))))
+    (make-user 
+      :authenticator 'NIL
+      :data (symbolize-hash-keys usr-data))))
 
 (defun find-checkin (authenticator checkinid &optional extra-fields params)
   "Return the checkin associated with the given id."
