@@ -60,12 +60,13 @@
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
 
-(defun symbolize-hash-keys (hsh-table &optional current remaining )
-  (if (not current)
-    ;;This is the first call (not a recursive call)
-    (let ((current (make-hash-table))
-          (remaining (hash-keys hsh-table)))
-      (asdfasd))
+(defun symbolize-hash-keys (hsh-table &optional cur remaining )
+  (let ((current (if cur
+                   cur
+                   (make-hash-table)))
+        (remaining (if remaining
+                     remaining
+                     (hash-keys hsh-table))))
     ;;Otherwise, we've already started and are in the middle of the recursion
     (if remaining
       (setf 
