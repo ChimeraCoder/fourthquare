@@ -18,24 +18,6 @@
       (let ((result (json:decode-json-from-string str)))
               result))
 
-(defun make-authenticator (c-id c-sec r-uri cde)
-  (let ((client-id c-id)
-        (client-secret c-sec)
-        (redirect-uri r-uri)
-        (code cde)
-        (access-token 'NIL))
-    #'(lambda (action &rest arguments)
-        (ecase action
-          (authorize-uri
-            (concatenate 'string "https://foursquare.com/oauth2/authenticate?client_id=" client-id "&response_type=code&redirect_uri=" redirect-uri))
-          (set-token (car arguments) 
-            (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
-          (access-token
-            (if (not access-token)
-              (setq access-token (json-to-list (drakma:http-request
-                              (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))))
-              (access-token)))))))
-
 
 (defun encode-url-params (params)
     "Encode the specified parameter alist as GET values (with Toodledo's format)"
