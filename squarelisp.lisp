@@ -11,6 +11,16 @@
 (defun hash-keys (hsh)
   (alexandria.0.dev:hash-table-keys hsh))
 
+(defun symbolize-hash-keys (hsh-table)
+  (let ((new-hash (make-hash-table)))
+    (progn 
+      (maphash (lambda (x y)
+                        (setf 
+                          (gethash (read-from-string x) new-hash)
+                          y))
+                        hsh-table)
+       new-hash)))
+
 (defun auth-param (authenticator)
   authenticator)
 
@@ -61,15 +71,6 @@
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
 
-(defun symbolize-hash-keys (hsh-table)
-  (let ((new-hash (make-hash-table)))
-    (progn 
-      (maphash (lambda (x y)
-                        (setf 
-                          (gethash (read-from-string x) new-hash)
-                          y))
-                        hsh-table)
-       new-hash)))
 
 (defun user-field (usr field)
   (gethash field (symbolize-hash-keys (user-data me))))
