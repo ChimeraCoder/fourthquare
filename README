@@ -1,0 +1,16 @@
+Fourthquare
+==============
+
+Fourthquare is a Common Lisp wrapper for the foursquare API.
+
+
+Currently it is a work in progress, but all endpoints are supported through the get-value and query functions.
+
+$> (get-value (user-data my-user) data "user" "checkins" "items")
+
+or
+
+$> (query (user-authenticator user) "user/self")
+
+etc.
+ 
