@@ -27,9 +27,7 @@
            (drakma:http-request uri :parameters 
                                 (acons "oauth_token" (auth-param authenticator)
                                        (acons "v" "20120324" params)))))
-    (progn
-      (print uri)
-      (json:parse (octets-to-string response)))))
+    (json:parse (octets-to-string response))))
 
 (defstruct user
   authenticator
