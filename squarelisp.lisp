@@ -58,9 +58,9 @@
                             extra-fields params))))
 
 (defun get-value (data-hash &rest hsh-keys)
-  (progn
-    (print data-hash)
-    (print hsh-keys)
-    (if (cdr hsh-keys)
-      (get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
-      (gethash (string (car hsh-keys)) data-hash))))
+    (progn
+      (print data-hash)
+      (print hsh-keys)
+      (if (cdr hsh-keys)
+       (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
+        (gethash (string (car hsh-keys)) data-hash))))
