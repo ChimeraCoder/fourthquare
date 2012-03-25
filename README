@@ -13,9 +13,16 @@ or
 $> (query (user-authenticator user) "user/self")
 
 etc.
- 
+
+But some other functions make this even easier!
+
+$> (defparameter me (find-user <authenticator> "self"))
 
 
+$> (recent-checkins me)
+
+
+...etc.
 
 License
 -------
