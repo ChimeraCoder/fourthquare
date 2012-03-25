@@ -4,6 +4,8 @@
 (ql:quickload "ironclad")
 (ql:quickload 'local-time)
 (ql:quickload 'lisp-unit)
+(ql:quickload "alexandria")
+
 
 (load "./bootstrap.lisp")
 
