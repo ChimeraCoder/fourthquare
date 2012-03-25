@@ -54,7 +54,6 @@
 (defun user-checkins (usr)
   (car (get-value (user-data usr) "user" "checkins" "items")))
 
-
 (defun get-value (data-hash &rest hsh-keys)
   (if (cdr hsh-keys)
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
@@ -76,5 +75,5 @@
 (defun checkin-field (chckin field)
   (gethash field (symbolize-hash-keys (checkin-data me))))
 
-
-
+(defun recent-checkins (usr)
+  (car (gethash "items" (user-field usr 'checkins))))
