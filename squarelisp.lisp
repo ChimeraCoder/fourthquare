@@ -39,10 +39,11 @@
   "Return the user associated with the given id."
   (make-user 
     :authenticator 'NIL
-    :data (gethash "response" 
-                   (query authenticator 
-                            (concatenate 'string "users/" (string userid)) 
-                            extra-fields params))))
+    :data (gethash "user"
+                   (gethash "response" 
+                            (query authenticator 
+                                   (concatenate 'string "users/" (string userid)) 
+                                   extra-fields params)))))
 
 (defun find-checkin (authenticator checkinid &optional extra-fields params)
   "Return the checkin associated with the given id."
@@ -58,4 +59,23 @@
   (if (cdr hsh-keys)
    (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
     (gethash (string (car hsh-keys)) data-hash)))
+
+(defun symbolize-hash-keys (hsh-table &optional current remaining )
+  (if (not current)
+    ;;This is the first call (not a recursive call)
+    (let ((current (make-hash-table))
+          (remaining (hash-keys hsh-table)))
+      (asdfasd))
+    ;;Otherwise, we've already started and are in the middle of the recursion
+    (if remaining
+      (setf 
+        (gethash 
+          (car remaining) 
+          (symbolize-hash-keys hsh-table current 
+                               (cdr remaining))) ;;The (car remaining) will be taken care of, so as long as the rest are, we're fine
+        (gethash (car remaining) hsh-table)) ;;Set it to the value that's crrently in the old table
+      current)))
+
+
+
 
