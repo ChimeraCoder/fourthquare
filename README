@@ -14,3 +14,10 @@ $> (query (user-authenticator user) "user/self")
 
 etc.
  
+
+
+
+License
+-------
+
+This wrapper is currently a work in progress. It was completed in less than 24 hours at the 2012 hackNY hackathon, and it was a lot of fun! But it still needs some work. It was presented at the hackNY hackathon demos, so others who missed the event may want to see it too, especially since it documents a quest for the 'perfect' Common Lisp webapp libraries. I'll clean it up once I've had more time (and sleep), and I plan on releasing it under an MIT/X11 license as well at that point, as many other foursquare libraries are. The full license is in the LICENSE file; if you have any other questions, you can contact me at dev@chimeracoder.net.
