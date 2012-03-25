@@ -77,7 +77,7 @@
     (gethash (string (car hsh-keys)) data-hash)))
 
 (defun recent-checkins (usr)
-  (car (gethash "items" (user-field usr 'checkins))))
+  (car (gethash "items" (gethash 'checkins (user-data usr) ))))
 
 
 
