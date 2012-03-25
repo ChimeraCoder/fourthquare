@@ -1,4 +1,4 @@
-(ql:quickload 'cl-json)
+(ql:quickload 'yason)
 (ql:quickload "cxml")
 (ql:quickload "drakma")
 (ql:quickload "ironclad")
