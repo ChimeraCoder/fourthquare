@@ -33,6 +33,9 @@
   authenticator
   data)
 
+(defmethod field-val ((usr user) (field symbol))
+  (gethash field (symbolize-hash-keys (user-data usr))))
+
 (defun find-user (authenticator userid &optional extra-fields params)
   "Return the user associated with the given id."
   (let ((usr-data (gethash "user"
