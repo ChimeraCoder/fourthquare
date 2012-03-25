@@ -44,6 +44,11 @@
                             (concatenate 'string "users/" (string userid)) 
                             extra-fields params))))
 
+(defun find-checkin (authenticator checkinid &optional extra-fields params)
+  "Return the checkin associated with the given id."
+  (gethash "response" (query authenticator
+                             (concatenate 'sring "checkins/" (string checkinid))
+                             extra-fields params)))
 
 (defun user-checkins (usr)
   (car (get-value (user-data usr) "user" "checkins" "items")))
