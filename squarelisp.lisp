@@ -70,5 +70,11 @@
                         hsh-table)
        new-hash)))
 
+(defun user-field (usr field)
+  (gethash field (symbolize-hash-keys (user-data me))))
+
+(defun checkin-field (chckin field)
+  (gethash field (symbolize-hash-keys (checkin-data me))))
+
 
 
