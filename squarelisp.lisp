@@ -32,16 +32,13 @@
             (concatenate 
                     'string 
                     "https://api.foursquare.com/v2/" 
-                    (string endpoint)
-                    "?oauth_token="
-                    (auth-param authenticator) 
-                    "&v=20120301&"
-                    (encode-url-params params)))
+                    (string endpoint)))
          (response
-           (drakma:http-request uri :preserve-uri 'T)))
+           (drakma:http-request uri :parameters 
+                                (acons "oauth_token" (auth-param authenticator)
+                                       (acons "v" "20120324" params)))))
     (progn
       (print uri)
-      (print response)
       (json-to-list (octets-to-string response)))))
       
 
