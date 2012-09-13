@@ -6,6 +6,7 @@
 (load "./bootstrap.lisp")
 
 (defun authorize-uri (client-id client-secret redirect-uri)
+  "Generate the authorization URL. Redirect the user (307) to the URL produced"
   (concatenate 'string "https://foursquare.com/oauth2/authenticate?client_id=" client-id "&response_type=code&redirect_uri=" redirect-uri))
 
 (defun hash-keys (hsh)
@@ -25,6 +26,7 @@
   authenticator)
 
 (defun set-token (client-id client-secret redirect-uri code)
+  "Issue a GET request to the URL produced here to receive a JSON response with the access token"
   (concatenate 'string "https://foursquare.com/oauth2/access_token?client_id=" client-id "&client_secret=" client-secret "&grant_type=authorization_code&redirect_uri=" redirect-uri "&code=" code ))
 
 (defun query (authenticator endpoint &optional extra-fields params)
@@ -69,12 +71,13 @@
       :data (symbolize-hash-keys checkin-data))))
 
 (defun user-checkins (usr)
-  (car (get-value (user-data usr) "user" "checkins" "items")))
+  "Given a user object, provide a list of the user's checkins"
+  (get-value (user-data usr) 'checkins "items"))
 
 (defun get-value (data-hash &rest hsh-keys)
   (if (cdr hsh-keys)
-   (apply #'get-value (gethash (string (car hsh-keys)) data-hash) (cdr hsh-keys))
-    (gethash (string (car hsh-keys)) data-hash)))
+   (apply #'get-value (gethash (car hsh-keys) data-hash) (cdr hsh-keys))
+    (gethash (car hsh-keys) data-hash)))
 
 (defun recent-checkins (usr)
   (car (gethash "items" (gethash 'checkins (user-data usr) ))))
