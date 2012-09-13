@@ -83,31 +83,31 @@ The 'checkins key will contain a hash-table of strings with the number of checki
 
 This can be accessed easily by the #'user-checkins convenience function.
 
-  > (user-checkins me)
-    (#<HASH-TABLE :TEST EQUAL :COUNT 12 {100630C5A3}>)
+    > (user-checkins me)
+       (#<HASH-TABLE :TEST EQUAL :COUNT 12 {100630C5A3}>)
   
-    Which returns, as expected, a list containing the checkins returned by the original #'find-user query. (In this case only a single checkin will be returned; depending on the endpoint and/or query parameters, multiple checkins may be found here).
+Which returns, as expected, a list containing the checkins returned by the original #'find-user query. (In this case only a single checkin will be returned; depending on the endpoint and/or query parameters, multiple checkins may be found here).
 
 The checkin objects are stored as hash-tables as well (these are simply hash-table mappings of the JSON objects returned by the foursquare API). For example, the user's checkin contains several fields:
 
-  > (hash-keys (car (user-checkins me)))
-    ("comments" "photos" "like" "likes" "venue" "timeZoneOffset" "timeZone"
-     "isMayor" "shout" "type" "createdAt" "id")
+    > (hash-keys (car (user-checkins me)))
+      ("comments" "photos" "like" "likes" "venue" "timeZoneOffset" "timeZone"
+       "isMayor" "shout" "type" "createdAt" "id")
 
 One of these fields is the venue, and if we are interested, we can find more information about the venue:
 
-  > (hash-keys (get-value  (car (user-checkins me)) "venue"))
-    ("listed" "beenHere" "friendVisits" "like" "likes" "stats" "verified"
-     "categories" "location" "contact" "name" "id")
+    > (hash-keys (get-value  (car (user-checkins me)) "venue"))
+      ("listed" "beenHere" "friendVisits" "like" "likes" "stats" "verified"
+       "categories" "location" "contact" "name" "id")
 
 
 Or just simply get the venueid, perhaps to make another query against the /venues/ endpoint:
 
-  > (defparameter last-venue-id (get-value (car (user-checkins me)) "venue" "id"))
+    > (defparameter last-venue-id (get-value (car (user-checkins me)) "venue" "id"))
 
 Note that, while wrapper functions have not (yet) been provided for every endpoint and aspect in the API, the #'query function is sufficiently generic to apply to any query necessary.
 
-  > (defparameter venue-query-response (query authenticator (concatenate 'string "/venues/" last-venue-id)))
+    > (defparameter venue-query-response (query authenticator (concatenate 'string "/venues/" last-venue-id)))
 
 [As described in the foursquare API documenation](https://developer.foursquare.com/overview/responses) a query returns a hash table with three fields: "response", "notifications", and "meta". "response" contains the actual information sought by the query: 
 
