@@ -32,18 +32,18 @@ Tutorial
 
 Register your application with http://developer.foursquare.com to receive your client-id and client-secret. You will need to provide the redirect-uri for your application (see below). 
 
-Use these to generate your authorization uri by passing them (as strings) to the #'authorize-uri function
+Use these to generate your authorization uri by passing them (as strings) to the `#'authorize-uri` function
 
 ````lisp
     > (authorize-uri "MYCLIENTIDASDFASDF" "MYCLIENTSECRETQWERTY" "http://localhost:8080/callback/foursquare")
     "https://foursquare.com/oauth2/authenticate?client_id=MYCLIENTID&response_type=code&redirect_uri"
-```
+````
 
 Redirect the user to this URI (an HTTP status code of 307 is appropriate), and they will be prompted to authorize your access to their foursquare account. (If they are not currently logged in to foursquare, they will be prompted to log in first before authorizing).
 
 When the user has authorized your access to their account, they will be redirected back to the redirect URI that you have specified and registered, and the code will be passed as a GET parameter (conveniently named 'code').
 
-Next, call #'set-token with the same paramters as before as well as this new code (as a string).
+Next, call `#'set-token` with the same paramters as before as well as this new code (as a string).
 
 ````lisp
     > (set-token "MYCLIENTIDASDFASDF" "MYCLIENTSECRETQWERTY" "http://localhost:8080/callback/foursquare" "CODEZXCVB")
@@ -58,7 +58,7 @@ You may save this access token (as a string) and use it when a function requires
 
 ###Queries
 
-The first thing you probably want to do is find the current user - you can do this using the #'find-user function, which takes *either* a userid *or* the string "self" (in which case it will return the user information for the account associated with the current authenticator/access token.
+The first thing you probably want to do is find the current user - you can do this using the `#'find-user` function, which takes *either* a userid *or* the string "self" (in which case it will return the user information for the account associated with the current authenticator/access token.
 
 ````lisp
     > (find-user "<access-token-you-just-received>" "self")
@@ -77,9 +77,9 @@ Note that calls to find-user are *not* automatically cached by this library; due
        :DATA #<HASH-TABLE :TEST EQL :COUNT 23 {1006342653}>)
 ````
 
-The data associated with a user is simply stored as a hash; this can be accessed with the #'user-data function that is automatically defined for the *user* struct.
+The data associated with a user is simply stored as a hash; this can be accessed with the `#'user-data` function that is automatically defined for the *user* struct.
 
-Also, strictly for convenience, #'hash-keys has been provided (via hash-table-keys in alexandria) to check the keys associated with a given hash-table.
+Also, strictly for convenience, `#'hash-keys` has been provided (via hash-table-keys in alexandria) to check the keys associated with a given hash-table.
 
 ````lisp
     > (hash-keys (user-data me))
@@ -91,14 +91,14 @@ Also, strictly for convenience, #'hash-keys has been provided (via hash-table-ke
    
 The 'checkins key will contain a hash-table of strings with the number of checkins associated with the user (accessible by the field "count"). If the user fetched is a friend, then the "items" field wil also be provided, providing the user's most-recent checkin. 
 
-This can be accessed easily by the #'user-checkins convenience function.
+This can be accessed easily by the `#'user-checkins` convenience function.
 
 ````lisp
     > (user-checkins me)
        (#<HASH-TABLE :TEST EQUAL :COUNT 12 {100630C5A3}>)
 ````
   
-Which returns, as expected, a list containing the checkins returned by the original #'find-user query. (In this case only a single checkin will be returned; depending on the endpoint and/or query parameters, multiple checkins may be found here).
+Which returns, as expected, a list containing the checkins returned by the original `#'find-user` query. (In this case only a single checkin will be returned; depending on the endpoint and/or query parameters, multiple checkins may be found here).
 
 The checkin objects are stored as hash-tables as well (these are simply hash-table mappings of the JSON objects returned by the foursquare API). For example, the user's checkin contains several fields:
 
@@ -110,42 +110,54 @@ The checkin objects are stored as hash-tables as well (these are simply hash-tab
 
 One of these fields is the venue, and if we are interested, we can find more information about the venue:
 
+```lisp
     > (hash-keys (get-value  (car (user-checkins me)) "venue"))
       ("listed" "beenHere" "friendVisits" "like" "likes" "stats" "verified"
        "categories" "location" "contact" "name" "id")
+````
 
 
 Or just simply get the venueid, perhaps to make another query against the /venues/ endpoint:
 
+````lisp
     > (defparameter last-venue-id (get-value (car (user-checkins me)) "venue" "id"))
+````
 
-Note that, while wrapper functions have not (yet) been provided for every endpoint and aspect in the API, the #'query function is sufficiently generic to apply to any query necessary.
+Note that, while wrapper functions have not (yet) been provided for every endpoint and aspect in the API, the `#'query` function is sufficiently generic to apply to any query necessary.
 
+````lisp
     > (defparameter venue-query-response (query authenticator (concatenate 'string "/venues/" last-venue-id)))
+````
 
 [As described in the foursquare API documenation](https://developer.foursquare.com/overview/responses) a query returns a hash table with three fields: "response", "notifications", and "meta". "response" contains the actual information sought by the query: 
 
+````lisp
     > (defparameter most-recent-venue (get-value venue-result "response" "venue"))
     > (print (hash-keys most-recent-venue))
         ("pageUpdates" "listed" "timeZone" "canonicalUrl" "shortUrl" "tags" "tips"
          "mayor" "createdAt" "hereNow" "photos" "specials" "beenHere" "friendVisits"
          "dislike" "like" "likes" "stats" "verified" "categories" "location" "contact"
          "name" "id") 
+````
 
 whereas "meta" is useful for identifying any errors, as it contains the http status code:
 
+````lisp
     > (get-value venue-query-response "meta" "code")
       200
+````
 
 The full list of error codes and the complete query response structure can be found at the link provided above.
 
 The "notifications" field is provided for certain kinds of queries, though the structure for that response is admittedly a bit cumbersome:
 
+````lisp
     > (get-value (car (get-value venue-response "notifications")) "type")
       "notificationTray"
 
     > (get-value (car (get-value venue-response "notifications")) "item" "unreadCount")
       0
+````
 
 (In this particular case, the number of unread tray notifications is provided; this behavior will vary depending on the query and may change over time, so this field in your response may look slightly different.)
 
